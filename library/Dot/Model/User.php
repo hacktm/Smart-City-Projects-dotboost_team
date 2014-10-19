@@ -57,8 +57,8 @@ class Dot_Model_User extends Dot_Model
 	 * @param array $data
 	 * @return void
 	 */
-	public function updateUser($data)
-	{
+	public function updateUser($data, $type)
+	{  
 		$id = $data['id'];
 		unset ($data['id']);
 		
@@ -67,8 +67,7 @@ class Dot_Model_User extends Dot_Model
 		{
 			$data['password'] = $this->passwordApi->hashPassword($data['password'], PASSWORD_DEFAULT);
 		}
-
-		$this->db->update('user', $data, 'id = '.$id);
+		$this->db->update($type, $data, 'id = '.$id);
 	}
 
 	/**

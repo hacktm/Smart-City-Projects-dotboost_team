@@ -86,6 +86,7 @@ class User_View extends View
 	public function details($templateFile, $data=array())
 	{
 		$this->tpl->setFile('tpl_main', 'user/' . $templateFile . '.tpl');
+		if(!empty($data))
 		foreach ($data as $k=>$v)
 		{
 			$this->tpl->setVar(strtoupper($k), $v);
@@ -101,5 +102,109 @@ class User_View extends View
 		
 		//empty because we don't want to show the password
 		$this->tpl->setVar('PASSWORD', '');
+	}
+	
+	public function grades($templateFile,$type,$page,$data)
+	{
+	    $this->tpl->setFile('tpl_main', 'user/'. $templateFile . '.tpl');
+	    $this->tpl->paginator($data['pages']);
+	    $this->tpl->setVar('PAGE', $page);
+	    $this->tpl->setBlock('tpl_main', 'tutor_head', 'tutor_head_block');
+	    $this->tpl->setBlock('tpl_main', 'tutor_seen', 'tutor_seen_block');
+	    $this->tpl->setBlock('tpl_main', 'tutor_not_seen', 'tutor_not_seen_block');
+	    $this->tpl->setBlock('tpl_main', 'grades', 'grades_block');
+	    if($type == 'student')
+	    {
+	       
+	        $this->tpl->parse('tutor_head_block', '');
+	        $this->tpl->parse('tutor_seen_block', '');
+	        $this->tpl->parse('tutor_not_seen_block', '');
+	        foreach($data['data'] as $k=>$v)
+	        {
+	            $this->tpl->setVar('GRADE', $v['value']);
+	            $this->tpl->setVar('SUBJECT', $v['subject']);
+	            $this->tpl->setVar('DATE', $v['date']);
+	            $this->tpl->parse('grades_block', 'grades', true);
+	        }
+	    }
+	    if($type == 'tutor')
+	    {
+	        $this->tpl->parse('tutor_head_block', 'tutor_head', true);
+	        $this->tpl->parse('tutor_seen_block', 'tutor_seen', true);
+	        $this->tpl->parse('tutor_not_seen_block', 'tutor_not_seen', true);
+	    }
+	   
+	}
+	public function absence($templateFile,$type,$page,$data)
+	{
+	    $this->tpl->setFile('tpl_main', 'user/'. $templateFile . '.tpl');
+	    $this->tpl->paginator($data['pages']);
+	    $this->tpl->setVar('PAGE', $page);
+	    $this->tpl->setBlock('tpl_main', 'tutor_head', 'tutor_head_block');
+	    $this->tpl->setBlock('tpl_main', 'tutor_seen', 'tutor_seen_block');
+	    $this->tpl->setBlock('tpl_main', 'tutor_not_seen', 'tutor_not_seen_block');
+	    $this->tpl->setBlock('tpl_main', 'absence', 'absence_block');
+	    if($type == 'student')
+	    {
+	        $this->tpl->parse('tutor_head_block', '');
+	        $this->tpl->parse('tutor_seen_block', '');
+	        $this->tpl->parse('tutor_not_seen_block', '');
+	        foreach($data['data'] as $k=>$v)
+	        {
+	            $this->tpl->setVar('SUBJECT', $v['subject']);
+	            $this->tpl->setVar('DATE', $v['date']);
+	            $this->tpl->parse('absence_block', 'absence', true);
+	        }
+	    }
+	    if($type == 'tutor')
+	    {
+	        $this->tpl->parse('tutor_head_block', 'tutor_head', true);
+	        $this->tpl->parse('tutor_seen_block', 'tutor_seen', true);
+	        $this->tpl->parse('tutor_not_seen_block', 'tutor_not_seen', true);
+	    }
+	}
+	
+	public function add($templateFile,$type)
+	{
+	    $this->tpl->setFile('tpl_main', 'user/'. $templateFile . '.tpl');
+	    $this->tpl->setBlock('tpl_main', 'grades', 'grades_block');
+	    $this->tpl->setBlock('tpl_main', 'absence', 'absence_block');
+	    if($type == 'grades')
+	    {
+	        $this->tpl->parse('grades_block', 'grades', true);
+	        $this->tpl->parse('absence_block', '');
+	    }
+	    if($type == 'absence')
+	    {
+	        $this->tpl->parse('grades_block', '');
+	        $this->tpl->parse('absence_block', 'absence',true );
+	    }
+	}
+	
+
+	public function showStudentList($templateFile, $studentList, $data = array())
+	{
+		$this->tpl->setFile('tpl_main','user/'.$templateFile);
+		$this->tpl->setBlock('tpl_main', 'student_list', 'student_list_block');
+		foreach($studentList['data'] as $student)
+		{
+			foreach($student as $key => $value)
+			{
+				$this->tpl->setVar(strtoupper($key), $value);
+			}
+			$this->tpl->parse('student_list_block', 'student_list',true );
+		}
+	}
+
+	public function sendSms($fileName, $message, $number, $data = array())
+	{
+	    $this->tpl->setFile('tpl_main', 'user/'.$fileName );
+	    $this->tpl->setVar('MESSAGE', $message);
+	    $this->tpl->setVar('NUMBER', $number);
+	}
+	public function sentSms($fileName, $feedback)
+	{
+	    $this->tpl->setFile('tpl_main', 'user/'.$fileName );
+	    $this->tpl->setVar('FEEDBACK', $feedback);
 	}
 }

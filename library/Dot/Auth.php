@@ -197,8 +197,19 @@ class Dot_Auth
 		// Removing the old Zend_Auth object and use direct verification of passwords
 		//1. retrieve user information as an object , or FALSE if nothing
 		$userInfo = $this->_getUserInformation($who, $values['username']);
-		
-		//We have no such user? Hurry Up and return FALSE 
+		//We have no such user? Hurry Up and return FALSE
+		//
+		if($who != 'admin')
+		{
+		    $userInfo->type=$who;
+		    $userInfo->role='user';
+		    $who = 'user';
+		}
+		else 
+		{
+		    if (!empty($userInfo))
+		     $userInfo->role='admin';
+		}
 		if(!$userInfo)
 		{
 			return FALSE;
@@ -239,12 +250,12 @@ class Dot_Auth
 	 */
 	private function _getUserInformation($userType, $username)
 	{
+
 		$returnObject = new stdClass();
-		
 		$this->db = Zend_Registry::get('database');
 		$select = $this->db->select()->from($userType)->where('username = ?', $username)->where('isActive = ?','1');
 		$resultArray = $this->db->fetchRow($select);
-		
+
 		// No results, we don't have that username
 		if(!is_array($resultArray))
 		{

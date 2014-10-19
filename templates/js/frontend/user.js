@@ -1,3 +1,4 @@
+
 // post the form using ajax
 $(document).ready(function(){
 	$("#userRegister").submit(function(){
@@ -25,4 +26,22 @@ $(document).ready(function(){
 		)
 		return false;
 	})
+	$.get( '../user/json-get-api-key' , function( data ) {
+		$( "#apiKeyField" ).text(data.key);
+		}, "json" );
+	
+	$( "#generateApiKeyButton" ).click(function() {
+		// silly hack --
+		// TODO: must find out how to declare SITE_URL
+		$.get( '../user/json-generate-api-key' , function( data ) {
+			if(data.result == 'ok')
+			{
+				$( "#apiKeyField" ).text(data.key);
+			}
+			else{
+				alert(data.message);
+			}
+			}, "json" );
+		alert( "API Key Generated" );
+		});
 });

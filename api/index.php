@@ -38,6 +38,7 @@ chdir(dirname(__DIR__));
 require_once 'Zend/Loader/Autoloader.php';
 $zendLoader = Zend_Loader_Autoloader::getInstance();
 $zendLoader->registerNamespace('Dot_');
+$zendLoader->registerNamespace('EduSmart_');
 $zendLoader->registerNamespace('Api_');
 
 // Create registry object, as read-only object to store there config, settings, and database

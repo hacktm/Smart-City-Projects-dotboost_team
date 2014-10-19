@@ -621,6 +621,9 @@ a.sort_down {
 .form.login input {
 	width: 198px;
 }
+.form.login select {
+	width: 198px;
+}
 /*** End Forms ***/
 
 
@@ -788,6 +791,7 @@ input.bigger {
 	box-shadow: none;
 	height: 87px;
 	padding: 42px 20px 0px 20px;
+	
 }
 .login_box form.login .text_imputs{
 	display: block;
@@ -803,7 +807,20 @@ input.bigger {
 	border: none;
 	width: 180px;
 }
+
+.login_box form.login .text_imputs select {
+	display: block;
+	float: left;
+	padding: 11px 10px 12px 10px;
+	margin-right: 10px;
+	border: none;
+	width: 200px;
+}
 .login_box form.login .text_imputs input[type="password"] {
+	margin-top: 9px;
+}
+
+.login_box form.login .text_imputs select {
 	margin-top: 9px;
 }
 

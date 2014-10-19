@@ -37,10 +37,10 @@ class User extends Dot_Model_User
 	 * @param int $id
 	 * @return array
 	 */
-	public function getUserInfo($id)
+	public function getUserInfo($id, $type)
 	{
 		$select = $this->db->select()
-					   ->from('user')
+					   ->from($type)
 					   ->where('id = ?', $id);
 		return $this->db->fetchRow($select);
 	}
@@ -53,7 +53,9 @@ class User extends Dot_Model_User
 	 */
 	public function registerLogin($data)
 	{
-		$this->db->insert('userLogin', $data);
+	    $who = $data['who'];
+	    unset($data['who']);
+		$this->db->insert($who.'Login', $data);
 	}
 
 	/**
@@ -106,13 +108,13 @@ class User extends Dot_Model_User
 	 * @param array $validData
 	 * @return void
 	 */
-	public function authorizeLogin($validData)
+	public function authorizeLogin($validData,$who)
 	{
 		$session = Zend_Registry::get('session');
 		unset($session->user);
 		// login info are VALID, we can see if is a valid user now 
 		$dotAuth = Dot_Auth::getInstance();
-		$validAuth = $dotAuth->process('user', $validData);
+		$validAuth = $dotAuth->process($who, $validData);
 		if($validAuth)
 		{
 			//prepare data for register the login
@@ -123,7 +125,8 @@ class User extends Dot_Model_User
 								'userId' => $session->user->id, 
 								'referer' => isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '',
 								'userAgent' => $_SERVER["HTTP_USER_AGENT"],
-								'country' => $userCountry[1]
+								'country' => $userCountry[1],
+			                     'who' => $who
 								);
 			$this->registerLogin($dataLogin);
 			$link = isset($session->wantUrl) ? $session->wantUrl : $this->config->website->params->url.'/user/account';

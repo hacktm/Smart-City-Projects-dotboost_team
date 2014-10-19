@@ -16,10 +16,11 @@
  */
 
 $session = Zend_Registry::get('session');
-
 // instantiate classes related to User module: model & view
 $userModel = new User(); 
 $userView = new User_View($tpl);
+$studentModel = new EduSmart_Model_Student();
+$teacherModel = new EduSmart_Model_Teacher();
 // all actions MUST set  the variable  $pageTitle
 $pageTitle = $option->pageTitle->action->{$registry->requestAction};
 switch ($registry->requestAction)
@@ -33,22 +34,25 @@ switch ($registry->requestAction)
 		}
 		else
 		{
-			header('Location: '.$registry->configuration->website->params->url.'/user/account');
+			header('Location: '.$registry->configuration->website->params->url.'/user/grades');
 			exit;
 		}
 	break;
 	case 'authorize':
 		// authorize user login
-		if (array_key_exists('username', $_POST) && array_key_exists('password', $_POST))
+		if (array_key_exists('username', $_POST) && array_key_exists('password', $_POST)&&array_key_exists('userType', $_POST))
 		{
 			// validate the authorization request parameters 
 			$values = array('username' => array('username' => $_POST['username']), 
 											'password' => array('password' => $_POST['password'])
 											);
-			$dotValidateUser = new Dot_Validate_User(array('who' => 'user', 'action' => 'login', 'values' => $values));
+			$who=$_POST['userType'];
+			$dotValidateUser = new Dot_Validate_User(array('who' => $who, 'action' => 'login', 'values' => $values));
+			
 			if($dotValidateUser->isValid())
 			{
-				$userModel->authorizeLogin($dotValidateUser->getData());
+				$userModel->authorizeLogin($dotValidateUser->getData(),$who);
+				
 			}
 			else
 			{
@@ -67,12 +71,14 @@ switch ($registry->requestAction)
 				$session->message['txt'] = $txt;
 				$session->message['type'] = 'error';
 			}
+			
 		}
 		else
 		{
 			$session->message['txt'] = $option->warningMessage->userPermission;
 			$session->message['type'] = 'warning';
 		}
+		
 		header('Location: '.$registry->configuration->website->params->url. '/' . $registry->requestController. '/login');
 		exit;
 	break;
@@ -85,11 +91,6 @@ switch ($registry->requestAction)
 		{
 			Dot_Auth::checkUserToken('user');
 			// POST values that will be validated
-			$values = array('details' =>
-																	array('firstName'=>(isset($_POST['firstName']) ? $_POST['firstName'] : ''),
-																				'lastName'=>(isset($_POST['lastName']) ? $_POST['lastName'] : '')),
-																				'email' => array('email' => (isset($_POST['email']) ? $_POST['email'] : ''))
-											);
 			
 			// Only if a new password is provided we will update the password field
 			if($_POST['password'] != '' || $_POST['password2'] !='' )
@@ -99,7 +100,7 @@ switch ($registry->requestAction)
 			}
 			
 			$dotValidateUser = new Dot_Validate_User(array(
-																											'who' => 'user',
+																											'who' => $registry->session->user->role,
 																											'action' => 'update',
 																											'values' => $values,
 																											'userId' => $registry->session->user->id)
@@ -109,7 +110,8 @@ switch ($registry->requestAction)
 				// no error - then update user
 				$data = $dotValidateUser->getData();
 				$data['id'] = $registry->session->user->id;
-				$userModel->updateUser($data);
+				$type = $registry->session->user->type;
+				$userModel->updateUser($data, $type);
 				$session->message['txt'] = $option->infoMessage->update;
 				$session->message['type'] = 'info';
 			}
@@ -120,55 +122,12 @@ switch ($registry->requestAction)
 				$session->message['type'] = 'error';
 			}
 		}
-		$data = $userModel->getUserInfo($registry->session->user->id);
+		$data = $userModel->getUserInfo($registry->session->user->id, $registry->session->user->type);
 		$userView->details('update',$data);
 	break;
-	case 'register':
-		// display signup form and allow user to register
-		$data = array();
-		$error = array();
-		if ($_SERVER['REQUEST_METHOD'] === "POST")
-		{
-			// POST values that will be validated
-			$values = array('details' => 
-								array('firstName'=>(isset($_POST['firstName']) ? $_POST['firstName'] : ''),
-									  'lastName'=>(isset($_POST['lastName'])? $_POST['lastName'] : ''),
-									 ),
-							'username' => array('username'=>(isset($_POST['username']) ? $_POST['username'] : '')),
-							'email' => array('email' => (isset($_POST['email']) ? $_POST['email'] : '')),
-							'password' => array('password' => (isset($_POST['password']) ? $_POST['password'] : ''),
-												'password2' =>  (isset($_POST['password2']) ? $_POST['password2'] : '')
-											   ),
-							'captcha' => array('recaptcha_challenge_field' => (isset($_POST['recaptcha_challenge_field']) ? $_POST['recaptcha_challenge_field'] : ''),
-											   'recaptcha_response_field' => (isset($_POST['recaptcha_response_field']) ? $_POST['recaptcha_response_field'] : ''))
-						  );
-			$dotValidateUser = new Dot_Validate_User(array('who' => 'user', 'action' => 'add', 'values' => $values));
-			if($dotValidateUser->isValid())
-			{
-				// no error - then add user
-				$data = $dotValidateUser->getData();
-				$userModel->addUser($data);
-				$session->message['txt'] = $option->infoMessage->add;
-				$session->message['type'] = 'info';
-				//login user
-				$userModel->authorizeLogin($data);
-			}
-			else
-			{
-				if(array_key_exists('password', $data))
-				{
-					// do not display password in the add form
-					$data = $dotValidateUser->getData();
-					unset($data['password']);
-				}
-			}
-			// add action and validation are made with ajax, so return json string
-			header('Content-type: application/json');  
-			echo Zend_Json::encode(array('data'=>$dotValidateUser->getData(), 'error'=>$dotValidateUser->getError()));
-			// return $data and $error as json
-			exit;
-		}
-		$userView->details('add',$data);
+	case 'list-grades':
+		//list child grades
+	    $userView->details('list_grades');
 	break;
 	case 'forgot-password':
 		// send an emai with the forgotten password
@@ -256,4 +215,237 @@ switch ($registry->requestAction)
 		header('location: '.$registry->configuration->website->params->url);
 		exit;
 	break;
-}
+
+	case 'grades':
+	    if(!isset($session->user))
+	    {
+	        // display Login form
+	        $userView->loginForm('login');
+	    }
+	    else
+	    {
+	       if($session->user->type == 'student')
+	       {
+	           $type = 'student';
+	           //get student grades
+	           $page = (isset($registry->request['page']) && $registry->request['page'] > 0) ? $registry->request['page'] : 1;
+	           $data=$studentModel->getGradesForIdentity($session->user,$page);
+	          
+	       }
+	       if($session->user->type == 'tutor')
+	       {
+	           $type = 'tutor';
+	           //get student grades
+	           $page = (isset($registry->request['page']) && $registry->request['page'] > 0) ? $registry->request['page'] : 1;
+	           $data=array();
+	           
+	       }
+	       if($session->user->type == 'teacher')
+	       {
+	           $type = 'teacher';
+	           //get student grades
+	           $page = (isset($registry->request['page']) && $registry->request['page'] > 0) ? $registry->request['page'] : 1;
+	           $data=array();
+	          
+	       }
+	       $userView->grades('grades',$type,$page,$data);
+	    }
+	break;
+	case 'absence':
+	    if(!isset($session->user))
+	    {
+	        // display Login form
+	        $userView->loginForm('login');
+	    }
+	    else
+	    {
+	        if($session->user->type == 'student')
+	        {
+	            $type = 'student';
+	            //get student absence
+	            $page = (isset($registry->request['page']) && $registry->request['page'] > 0) ? $registry->request['page'] : 1;
+	            $data=$studentModel->getAbsencesForIdentity($session->user,$page);
+	           
+	        }
+	        if($session->user->type == 'tutor')
+	        {
+	            $type = 'tutor';
+	            //get student grades
+	            $data=array();
+	            $page = (isset($registry->request['page']) && $registry->request['page'] > 0) ? $registry->request['page'] : 1;
+	        }
+	        if($session->user->type == 'teacher')
+	        {
+	            $type = 'teacher';
+	            //get student absence
+	            $data=array();
+	            $page = (isset($registry->request['page']) && $registry->request['page'] > 0) ? $registry->request['page'] : 1;
+	        
+	        }
+	        $userView->absence('absence',$type,$page,$data);
+	    }
+	    break;
+	    case 'grades-add':
+	        if(!isset($session->user))
+	        {
+	            // display Login form
+	            $userView->loginForm('login');
+	        }
+	        else 
+	        {
+	            if(!$session->user->type == 'teacher')
+	            {
+	                $userView->loginForm('login');
+	            }
+	            else 
+	            {
+	                if($_SERVER['REQUEST_METHOD'] === 'POST')
+	                {
+	                    //baga tare in db nota noua
+	                }
+	                else 
+	                {
+	                    //formular
+	                    $userView->add('add','grades');
+	                }
+	            }
+	        }
+	       
+	    break;
+	    case 'absence-add':
+	        if(!isset($session->user))
+	        {
+	            // display Login form
+	            $userView->loginForm('login');
+	        }
+	        else
+	        {
+	            if(!$session->user->type == 'teacher')
+	            {
+	                $userView->loginForm('login');
+	            }
+	            else
+	            {
+	                if($_SERVER['REQUEST_METHOD'] === 'POST')
+	                {
+	                    //baga tare in db nota noua
+	                }
+	                else
+	                {
+	                    //formular
+	                    $userView->add('add','absence');
+	                }
+	            }
+	        }
+        break;
+        case 'send-message' :
+            $dotAuth = Dot_Auth::getInstance();
+            $identity = (array)$dotAuth->getIdentity();
+            if($identity['type'] != 'teacher')
+            {
+                $session->message['txt'] = 'Only teachers are allowed to send messages';
+                $session->message['type'] = 'error';
+                header('Location: '.$registry->configuration->website->params->url.'/user/');
+                exit;
+            }
+            $smsModel = new EduSmart_Sms();
+            $message = isset($_POST['message']) ? $_POST['message'] : '';
+            $number = isset($registry->request['number']) ? $registry->request['number'] : '';
+            $userView->sendSms( 'send.tpl', $message, $number );
+            if(isset($_POST['number']) && isset($_POST['message'])
+                && !empty($_POST['number']) && strlen($_POST['message']) > 2 )
+            {
+                $message = $_POST['message'];
+                $number  = $_POST['number'];
+                $length = strlen($message);
+                if($length > 3 && $length < 155)
+                    $result = $smsModel->sendSms($message, $number, 'xeprzfkleiab');
+                $registry->session->message['txt'] = $result;
+                $registry->session->message['type'] = ($result=='"success"') ? 'info' : 'error';
+                	
+            }
+        
+        
+            break;
+        
+        
+        
+        // JSON from here below
+        case 'json-generate-api-key':
+        	$output['result'] = 'error';
+        	$output['message'] = 'Couldn\'t contact server. Please try again later';
+			$dotAuth = Dot_Auth::getInstance();
+			$identity = (array) $dotAuth->getIdentity();
+			$token = EduSmart_ApiUtilities::generateApiKeyToken($identity);
+							
+			$eduModel = new EduSmart_Model();
+			$eduModel->removeOlderTokensForIdentity($identity);
+			$eduModel->addToken($token);
+							
+			$output = $token;
+			$output['result'] = 'ok';		 		
+			// store the token
+			exit(json_encode($output));
+			break;
+		case 'json-get-api-key':
+			$key['result'] = 'error';
+			$dotAuth = Dot_Auth::getInstance();
+			$identity = (array) $dotAuth->getIdentity();	
+			$eduModel = new EduSmart_Model();
+			$key = $eduModel->getApiKeyForIdentity($identity);
+			if(empty($key))
+			{
+				$output['key'] = 'The key is expired -- Press Generate New Api Key';
+			}
+			else
+			{
+				
+				$output['key'] = $key;
+				$output['result'] = 'ok';
+			}
+				exit(json_encode($output));
+			break;
+			case 'my-class':
+				if(!isset($session->user))
+				{
+					// display Login form
+					$userView->loginForm('login');
+				}
+				else
+				{
+					if(!$session->user->type == 'teacher')
+					{
+						$userView->loginForm('login');
+					}
+					else
+					{
+							$page = (isset($registry->request['page']) && $registry->request['page'] > 0) ? $registry->request['page'] : 1;
+							$studentList=$teacherModel->getStudentsByTeacherIdentity($identity->id,$page);
+							$userView->showStudentList($studentList);
+						
+					}
+				}
+				break;
+				
+				case 'view-class':
+					if(!isset($session->user))
+					{
+						// display Login form
+						$userView->loginForm('login');
+					}
+					else
+					{
+						if(!$session->user->type == 'teacher')
+						{
+							$userView->loginForm('login');
+						}
+						else
+						{
+							$page = (isset($registry->request['page']) && $registry->request['page'] > 0) ? $registry->request['page'] : 1;
+							$studentList=$teacherModel->getStudentListByClassId($registry->request['id'],$page);
+							$userView->showStudentList($studentList);
+				
+						}
+					}
+					break;
+}	

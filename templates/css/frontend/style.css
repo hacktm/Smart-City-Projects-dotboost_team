@@ -162,6 +162,16 @@ ul.url_pattern li { list-style: disc; padding: 10px 0px; }
 	ul.menu_top { position: absolute; top: 100px; left: 0px; width: 100%; float: none; margin: 0px; text-align: center; -moz-box-shadow: 0px 1px 2px #838383; -webkit-box-shadow: 0px 1px 2px #838383; box-shadow: 0px 1px 2px #838383; }
 	ul.menu_top li { display: block; float: none; background: #EEF2F5; width: 100%; padding: 10px 0px; border-bottom: 1px solid #D6D6D6; }
 	ul.menu_top li a { display: block; }
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	/****** Content ******/
 	#wrapper { margin: 0px auto; }
 	#body { padding: 30px 15px; }
@@ -182,3 +192,72 @@ ul.url_pattern li { list-style: disc; padding: 10px 0px; }
 	ul.form li label.empty { line-height: 1px; margin-bottom: 0px; }
 	ul.form li input[type="text"], ul.form li input[type="password"] { float: none; width: 100%; }
 }
+
+
+
+
+
+
+/*** Menu ***/
+#mainMenu {
+	display: block;
+	float: left;
+}
+#mainMenu li {
+	position: relative;
+	display: block;
+	float: left;
+	margin: 0px 1px 0px 0px;
+	list-style: none;
+}
+#mainMenu li a {
+	display: block;
+	padding: 0px 37px 0 25px;
+	height: 65px;
+	text-decoration: none;
+	text-align: center;
+	font-size: 12px;
+	line-height: 65px;
+	text-transform:none;
+	text-shadow: none;
+	cursor: pointer;
+	font-family: 'Ubuntu', sans-serif;
+	background: right 31px no-repeat;
+}
+#mainMenu li a.selected {
+	background: right -27px no-repeat;
+}
+#mainMenu li a.menuHover, #mainMenu li a.selected.menuHover {
+	background: right -27px no-repeat;
+}
+#mainMenu li ul {
+	position: absolute;
+	margin: 0;
+	padding: 0px 0px 10px 0px;
+	visibility: hidden;
+	min-width: 150px;
+}
+#mainMenu li ul li {
+	float: none;
+	padding: 0;
+	margin: 0;
+	height: 29px;
+	line-height: 29px;
+}
+#mainMenu li ul li a {
+	display: block;
+	padding: 0px 10px 0 20px !important;
+	margin: 0 !important;
+	width: auto;
+	height: 30px;
+	line-height: 30px;
+	text-align: left;
+	text-transform: none;
+	background-image: none;
+}
+#mainMenu li ul li a.selected {
+	border: none;
+	background-color: transparent;
+	background-image: none;
+}
+/*** End Menu ***/

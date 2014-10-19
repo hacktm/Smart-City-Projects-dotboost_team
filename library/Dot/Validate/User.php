@@ -83,10 +83,8 @@ class Dot_Validate_User extends Dot_Validate
 		//validate username
 		if(array_key_exists('username', $values))
 		{
-			$validatorChain = new Zend_Validate();
-			$validatorChain->addValidator(new Zend_Validate_Alnum())
-											->addValidator(new Zend_Validate_StringLength($this->option->validate->details->lengthMin,
-																																		$this->option->validate->details->lengthMax));
+			$validatorEmail = new Zend_Validate_EmailAddress();
+
 			$this->_callFilter($validatorChain, $values['username']);
 			if(in_array($this->_options['action'], array('add', 'update')))
 			{

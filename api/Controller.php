@@ -10,15 +10,53 @@
  * @version    $Id: Controller.php 808 2014-07-15 14:12:56Z costin $
  * @author     DotKernel Team <team@dotkernel.com>
  */
-
+/// BOOTSTRAP
+// if the api is disabled stop execution
 if (!$registry->configuration->api->params->enable)
 {
-	header("HTTP/1.0 403 Forbidden");
-	exit;
+    header("HTTP/1.0 403 Forbidden");
+    exit;
+}
+$data = array();
+$key = isset($registry->arguments['key']) ? $registry->arguments['key'] : '';
+$userType = isset($registry->arguments['user_type']) ? $registry->arguments['user_type'] : '' ;
+$allowedUserTypes = array('student', 'parent', 'teacher');
+if(! in_array($userType, $allowedUserTypes))
+{
+	$data['result'] = 'error';
+	$data['response'] = 'User type missing or not allowed ';
+	$jsonString = Zend_Json::encode($data);
+	echo $jsonString;
+	exit();
 }
 
+
+if(empty($key))
+{
+	$data['result'] = 'error';
+	$data['response'] = 'API Key is missing';
+	$jsonString = Zend_Json::encode($data);
+	echo $jsonString;
+	exit();
+}
+
+$eduModel = new EduSmart_Model();
+
+if(!$eduModel->isKeyValid($key, $userType))
+{
+	$data['result'] = 'error';
+	$data['response'] = 'API Key is wrong or expired';
+	$jsonString = Zend_Json::encode($data);
+	echo $jsonString;
+	exit();
+} 
+
+#exit('ok');
 if (isset($registry->action))
 {
+    # LOGIN TYPE
+    # simple search
+    
 	switch ($registry->action)
 	{
 		case 'version':

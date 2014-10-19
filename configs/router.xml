@@ -8,13 +8,20 @@
 		<admin>Admin</admin>
 		<admin>System</admin>
 		<admin>User</admin>
+		<admin>School</admin>
+		<admin>Teacher</admin>
+		<admin>Profile</admin>
+		<admin>Classmodel</admin>
+		<admin>Sms</admin>
+		<admin>Tutor</admin>
+		<admin>Student</admin>
 		<rss>Sample</rss>
 		<mobile>Page</mobile>
 	</controllers>
  	<routes>
  		<!-- default controllers for modules -->
 		<controller>
-			<frontend>Page</frontend>
+			<frontend>User</frontend>
 			<admin>System</admin>
 			<rss>Sample</rss>
 			<mobile>Page</mobile>
@@ -29,6 +36,13 @@
 				<Admin>account</Admin>
 				<System>dashboard</System>
 				<User>list</User>
+				<Profile>list</Profile>
+				<School>list</School>
+				<Teacher>list</Teacher>
+				<Classmodel>list</Classmodel>
+				<Sms>send</Sms>
+				<Tutor>list</Tutor>
+				<Student>list</Student>
 			</admin>
 			<mobile>
 				<Page>home</Page>

@@ -99,6 +99,7 @@ class View extends Dot_Template
 	 */
 	public function setMenu()
 	{
+	    $session = Zend_Registry::get('session');
 		$dotAuth = Dot_Auth::getInstance();
 		$registry = Zend_Registry::getInstance();
 		
@@ -107,22 +108,44 @@ class View extends Dot_Template
 		
 		// top menu
 		$this->setFile('tpl_menu_top', 'blocks/menu_top.tpl');
-		$this->setBlock('tpl_menu_top', 'top_menu_not_logged', 'top_menu_not_logged_block');
-		$this->setBlock('tpl_menu_top', 'top_menu_logged', 'top_menu_logged_block');
-
-		// add selected to the correct menu item
-		$this->setVar($selectedItem, 'selected');
-		
-		if ($dotAuth->hasIdentity('user'))
-		{
-			$this->parse('top_menu_logged_block', 'top_menu_logged', true);
-			$this->parse('top_menu_not_logged_block', '');		
-		}
-		else
-		{
-			$this->parse('top_menu_not_logged_block', 'top_menu_not_logged', true);
-			$this->parse('top_menu_logged_block', '');		
-		}
+        $this->setBlock('tpl_menu_top', 'student', 'student_block');
+        $this->setBlock('tpl_menu_top', 'tutor', 'tutor_block');
+        $this->setBlock('tpl_menu_top', 'teacher', 'teacher_block');
+        // add selected to the correct menu item
+        $this->setVar($selectedItem, 'selected');
+        
+        if ($dotAuth->hasIdentity('user'))
+        {   $this->setVar("USERNAME", $session->user->firstName);
+            $this->setVar("TYPE", $session->user->type);
+            if ($session->user && $session->user->type=="student")
+            {   
+                 $this->setVar("ACTION", "grades");
+                 $this->parse('student_block', 'student', true);
+            }
+            else 
+            {
+                 if ($session->user && $session->user->type=="tutor")
+                 {
+                     $this->setVar("ACTION", "grades");
+                     $this->parse('tutor_block', 'tutor', true);
+                 }
+                 else 
+                 {
+                     if ($session->user && $session->user->type=="teacher")
+                     {
+                         $this->setVar("ACTION", "grades");
+                         $this->parse('teacher_block', 'teacher', true);
+                     }
+                 }
+                        
+            }
+           
+            //$this->parse('student_block', '');
+        }
+        else
+        {
+            $this->setVar("LOGIN_FORM", 'login_form');
+        }
 		$this->parse('MENU_TOP', 'tpl_menu_top');
 		
 		// sidebar menu
@@ -154,6 +177,73 @@ class View extends Dot_Template
 		
 		$this->parse('MENU_FOOTER', 'tpl_menu_footer');
 	}
+	
+	
+	/**
+	 * Create the pagination, based on how many data
+	 * @access public
+	 * @param array $page
+	 * @return string
+	 */
+	protected function paginator($page)
+	{
+	    // get route again here, because ajax may have change it
+	    //$route = Zend_Registry::get('route');
+	    $request = Zend_Registry::get('request');
+	    $this->setFile('page_file', 'paginator.tpl');
+	    $this->setVar('TOTAL_RECORDS', $page->totalItemCount);
+	    $this->setVar('TOTAL_PAGES', $page->pageCount );
+	    $this->setBlock('page_file', 'first', 'first_row');
+	    $this->setBlock('page_file', 'last', 'last_row');
+	    $this->setBlock('page_file', 'current_page', 'current_row');
+	    $this->setBlock('page_file', 'other_page', 'other_row');
+	    $this->setBlock('page_file', 'pages', 'pages_row');
+	
+	    if(array_key_exists('page', $request))
+	    {
+	        unset($request['page']);
+	    }
+	
+	    $link = Dot_Route::createCanonicalUrl() .'page/';
+	
+	    if ($page->current != 1)
+	    {
+	        $this->setVar('FIRST_LINK',$link."1");
+	        $this->parse('first_row', 'first', TRUE);
+	    }
+	    else
+	    {
+	        $this->parse('first_row', '');
+	    }
+	    if ($page->current != $page->last && $page->last > $page->current)
+	    {
+	        $this->setVar('LAST_LINK',$link.$page->last);
+	        $this->parse('last_row', 'last', TRUE);
+	    }
+	    else
+	    {
+	        $this->parse('last_row', '');
+	    }
+	    foreach ($page->pagesInRange as $val)
+	    {
+	        $this->setVar('PAGE_NUMBER', $val);
+	        $this->parse('other_row','');
+	        $this->parse('current_row','');
+	        if($val == $page->current)
+	        {
+	            $this->parse('current_row','current_page', TRUE);
+	        }
+	        else
+	        {
+	            $this->setVar('PAGE_LINK', $link.$val);
+	            $this->parse('other_row','other_page', TRUE);
+	        }
+	        $this->parse('pages_row', 'pages', TRUE);
+	    }
+	    $this->parse('PAGINATION', 'page_file');
+	}
+	
+	
 	/**
 	 * Display message - error, warning, info
 	 * @access public

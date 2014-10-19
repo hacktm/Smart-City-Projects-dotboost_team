@@ -85,8 +85,8 @@ If you didn't make this request, you can ignore this email.</message>
 				<userPermission>You don't have enough credentials to access this url.</userPermission>
 			</warningMessage>
 			<captchaOptions>
-				<recaptchaPublicKey>6Lfpob0SAAAAAHX4n7XbKmsuH9GMV28ooKWUxJzK </recaptchaPublicKey>
-				<recaptchaPrivateKey>6Lfpob0SAAAAALzqudrCOMFoemDW4Wl2mxmJR0a1</recaptchaPrivateKey>
+				<recaptchaPublicKey>6LclQvwSAAAAACMQILayugTazeyn4Zc25RayLULH </recaptchaPublicKey>
+				<recaptchaPrivateKey>6LclQvwSAAAAAAIliuDuCEqX9_wuBX___6mP6cwl</recaptchaPrivateKey>
 				<linkTitle>Click me</linkTitle>
 				<linkHiddenText>...</linkHiddenText>
 				<theme>white</theme>

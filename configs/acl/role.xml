@@ -5,6 +5,7 @@
 			<guest>user</guest> <!-- 'user' type inherits permission from 'guest' -->
 			<guest>admin</guest> <!-- 'admin' type inherits permision from 'guest' -->
 			<user>admin</user> <!-- 'admin' type inherits permision from 'user' -->
+			
 	</type>		
 	<permission>
 		<frontend>

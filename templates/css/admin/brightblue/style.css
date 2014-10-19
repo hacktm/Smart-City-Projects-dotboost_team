@@ -216,13 +216,23 @@ form.login {
 form.login input {
 	background-color: #10629C;
 }
-form.login input[type="text"], form.login input[type="password"] {
+form.login select {
+	background-color: #10629C;
+}
+form.login input[type="text"], form.login input[type="password"],form.login select {
 	color: #FFFFFF;
 }
 form.login input.button {
 	background: #FFFFFF url('images/login_btn.png') no-repeat center 20px;
 	color: #2F97E0;
 }
+
+
+#login_button {
+	background: #FFFFFF url('images/login_btn.png') no-repeat center 40px;
+	color: #2F97E0;
+}
+
 .login_box h2 {
 	color: #10629C;
 }

@@ -96,6 +96,147 @@
 				</subItem>
 			</subItems>
 		</item>
+		<item>
+			<title>School</title>
+			<link>school/list/</link>
+			<description>school details</description>
+			<subItems>			
+				<subItem>
+					<title>List</title>
+					<link>school/list/</link>
+					<description>List</description>
+					<highlight>
+				        <link>shcool/update/</link>
+				        <link>shcool/delete/</link>
+					</highlight>
+				</subItem>						
+				<subItem>
+					<title>Add new</title>
+					<link>school/add/</link>
+					<description>Add</description>
+				</subItem>			
+			</subItems>
+		</item>
+		<item>
+			<title>Teacher</title>
+			<link>teacher/list/</link>
+			<description>Teacher details</description>
+			<subItems>			
+				<subItem>
+					<title>List</title>
+					<link>teacher/list/</link>
+					<description>List</description>
+					<highlight>
+				        <link>teacher/update/</link>
+				        <link>teacher/delete/</link>
+					</highlight>
+				</subItem>						
+				<subItem>
+					<title>Add new</title>
+					<link>teacher/add/</link>
+					<description>Add</description>
+				</subItem>			
+			</subItems>
+		</item>
+		<item>
+			<title>Profile</title>
+			<link>profile/list/</link>
+			<description>profile details</description>
+			<subItems>			
+				<subItem>
+					<title>List</title>
+					<link>profile/list/</link>
+					<description>List</description>
+					<highlight>
+				        <link>profile/update/</link>
+				        <link>profile/delete/</link>
+					</highlight>
+				</subItem>						
+				<subItem>
+					<title>Add new</title>
+					<link>profile/add/</link>
+					<description>Add</description>
+				</subItem>			
+			</subItems>
+		</item>
+		<item>
+			<title>Class</title>
+			<link>classmodel/list/</link>
+			<description>class details</description>
+			<subItems>			
+				<subItem>
+					<title>List</title>
+					<link>classmodel/list/</link>
+					<description>List</description>
+					<highlight>
+				        <link>classmodel/update/</link>
+				        <link>classmodel/delete/</link>
+					</highlight>
+				</subItem>						
+				<subItem>
+					<title>Add new</title>
+					<link>classmodel/add/</link>
+					<description>Add</description>
+				</subItem>			
+			</subItems>
+		</item>
+		<item>
+			<title>Tutor</title>
+			<link>tutor/list/</link>
+			<description>Tutor details</description>
+			<subItems>			
+				<subItem>
+					<title>List</title>
+					<link>tutor/list/</link>
+					<description>List tutors</description>
+					<highlight>
+				        <link>tutor/update/</link>
+				        <link>tutor/delete/</link>
+					</highlight>
+				</subItem>						
+				<subItem>
+					<title>Add new</title>
+					<link>tutor/add/</link>
+					<description>Add tutor</description>
+				</subItem>			
+			</subItems>
+		</item>
+		<item>
+			<title>Student</title>
+			<link>student/list/</link>
+			<description>Student details</description>
+			<subItems>			
+				<subItem>
+					<title>List</title>
+					<link>student/list/</link>
+					<description>List students</description>
+					<highlight>
+				        <link>student/update/</link>
+				        <link>student/delete/</link>
+					</highlight>
+				</subItem>						
+				<subItem>
+					<title>Add new</title>
+					<link>student/add/</link>
+					<description>Add student</description>
+				</subItem>			
+			</subItems>
+		</item>
+		
+		
+		
+		<item>
+			<title>Sms</title>
+			<link>sms/send/</link>
+			<description>sms details</description>
+			<subItems>			
+				<subItem>
+					<title>Send SMS</title>
+					<link>sms/send/</link>
+					<description>Send SMS</description>
+				</subItem>			
+			</subItems>
+		</item>
 	</menu>
 </config>
 </menus>

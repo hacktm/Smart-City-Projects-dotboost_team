@@ -1,29 +1,73 @@
-<div id="top_menu_button" class="menu_button" onclick="ShowTopMenu()">
-	<span></span>
-	<span></span>
-	<span></span>
-</div>
-<ul id="top_menu" class="menu_top">
-	<li class="{SEL_PAGE_HOME}{SEL_PAGE_ABOUT}{SEL_PAGE_WHO-WE-ARE}">
-		<a href="{SITE_URL}">Home</a>
-	</li>
-	<li class="{SEL_PAGE_OUTBOUND-LINKS}">
-		<a href="{SITE_URL}/page/outbound-links">Outbound Links</a>
-	</li>
-	<!-- BEGIN top_menu_not_logged -->
-	<li class="{SEL_USER_LOGIN}">
-		<a href="{SITE_URL}/user/login">Log In</a>
-	</li>
-	<li class="{SEL_USER_REGISTER}">
-		<a href="{SITE_URL}/user/register">Register</a>
-	</li>
-	<!-- END top_menu_not_logged -->
-	<!-- BEGIN top_menu_logged -->
-	<li class="{SEL_USER_ACCOUNT}">
-		<a href="{SITE_URL}/user/account">My Account</a>
-	</li>
-	<li>
-		<a href="{SITE_URL}/user/logout">Log Out</a>
-	</li>
-	<!-- END top_menu_logged -->
+<a href="{SITE_URL}/user/{ACTION}" id="logo">{SITE_NAME}</a>
+<ul id="mainMenu" class="clearfix">
+
+			<!-- BEGIN student -->
+					<li><a class="{SEL_USER_ACCOUNT}" href="{SITE_URL}/user/account" style="background-image:none;">My account</a>
+					<ul style="display:none"></ul>
+					</li>
+					<li><a class="{SEL_USER_GRADES}" href="{SITE_URL}/user/grades" style="background-image:none;">Grades</a>
+					<ul style="display:none"></ul>
+					
+					</li>
+					<li><a class="{SEL_USER_ABSENCE}" href="{SITE_URL}/user/absence" style="background-image:none;">Absences</a>
+					<ul style="display:none"></ul>
+					</li>
+					
+					<div class="top_user_menu clearfix">
+						<span>Welcome {USERNAME} ({TYPE}) </span>
+						<a class="logout" href="{SITE_URL}/user/logout">&nbsp;</a>
+					</div>
+			<!-- END student -->		
+			
+			<!-- BEGIN tutor -->
+					<li><a class="{SEL_USER_ACCOUNT}" href="{SITE_URL}/user/account" style="background-image:none;">My account</a>
+					<ul style="display:none"></ul>
+					</li>
+					<li><a class="{SEL_USER_GRADES}" href="{SITE_URL}/user/grades" style="background-image:none;">Grades</a>
+					<ul style="display:none"></ul>
+					</li>
+					<li><a class="{SEL_USER_ABSENCE}" href="{SITE_URL}/user/absence" style="background-image:none;">Absences</a>
+					<ul style="display:none"></ul>
+					</li>
+					
+					<div class="top_user_menu clearfix">
+						<span>Welcome {USERNAME} ({TYPE}) </span>
+						<a class="logout" href="{SITE_URL}/user/logout">&nbsp;</a>
+					</div>
+			<!-- END tutor -->
+			
+			<!-- BEGIN teacher -->
+					<li><a class="{SEL_USER_ACCOUNT}" href="{SITE_URL}/user/account" style="background-image:none;">My account</a>
+					<ul style="display:none"></ul>
+					</li>
+					<li><a class="{SEL_USER_CLASSES}" href="{SITE_URL}/user/classes">Classes</a>
+					<ul>
+						<li>
+							<a class="{SEL_USER_GRADES}" href="{SITE_URL}/user/my-class">My class</a>
+						</li>	
+						<li>
+							<a href="{SITE_URL}/user/view-class">View class</a>
+						</li>
+					</ul>
+					
+					
+					
+					</li>
+					<li><a class="{SEL_USER_ABSENCE-EXCUSE}" href="{SITE_URL}/user/absence-excuse" style="background-image:none;">Excuse absences</a>
+					<ul style="display:none"></ul>
+					</li>
+					<li><a class="{SEL_USER_SEND-MESAGE}" href="{SITE_URL}/user/send-message" style="background-image:none;">Send message to tutor</a>
+					<ul style="display:none"></ul>
+					</li>
+					
+					<div class="top_user_menu clearfix">
+						<span>Welcome {USERNAME} ({TYPE})</span>
+						<a class="logout" href="{SITE_URL}/user/logout">&nbsp;</a>
+					</div>
+					
+			<!-- END teacher -->
+			<!-- BEGIN account -->
+			
+			<!-- END account -->	
+			
 </ul>

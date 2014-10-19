@@ -95,7 +95,7 @@ switch ($registry->requestAction)
 				// no error - then update user
 				$data = $dotValidateUser->getData();
 				$data['id'] = $registry->request['id'];
-				$userModel->updateUser($data);
+				$userModel->updateUser($data,"admin");
 				$registry->session->message['txt'] = $option->infoMessage->accountUpdate;
 				$registry->session->message['type'] = 'info';
 				header('Location: '.$registry->configuration->website->params->url. '/' . $registry->requestModule . '/' . $registry->requestController. '/list/');
