@@ -130,8 +130,25 @@ class User_View extends View
 	    if($type == 'tutor')
 	    {
 	        $this->tpl->parse('tutor_head_block', 'tutor_head', true);
-	        $this->tpl->parse('tutor_seen_block', 'tutor_seen', true);
-	        $this->tpl->parse('tutor_not_seen_block', 'tutor_not_seen', true);
+	        
+	        foreach($data['data'] as $k=>$v)
+	        {
+	            $this->tpl->setVar('GRADE', $v['value']);
+	            $this->tpl->setVar('SUBJECT', $v['subject']);
+	            $this->tpl->setVar('DATE', $v['date']);
+	            if($v['seen'] == 1)
+	            {
+	                $this->tpl->parse('tutor_seen_block', 'tutor_seen', true);
+	                $this->tpl->parse('tutor_not_seen_block', '');
+	            }
+	            else
+	            {
+	                $this->tpl->setVar('GRADE_ID', $v['id']);
+	                $this->tpl->parse('tutor_seen_block', '');
+	                $this->tpl->parse('tutor_not_seen_block', 'tutor_not_seen', true);
+	            }
+	            $this->tpl->parse('grades_block', 'grades', true);
+	        }
 	    }
 	   
 	}
@@ -159,8 +176,23 @@ class User_View extends View
 	    if($type == 'tutor')
 	    {
 	        $this->tpl->parse('tutor_head_block', 'tutor_head', true);
-	        $this->tpl->parse('tutor_seen_block', 'tutor_seen', true);
-	        $this->tpl->parse('tutor_not_seen_block', 'tutor_not_seen', true);
+	        foreach($data['data'] as $k=>$v)
+	        {
+	            $this->tpl->setVar('SUBJECT', $v['subject']);
+	            $this->tpl->setVar('DATE', $v['date']);
+	            if($v['seen'] == 1)
+	            {
+	                $this->tpl->parse('tutor_seen_block', 'tutor_seen', true);
+	                $this->tpl->parse('tutor_not_seen_block', '');
+	            }
+	            else
+	            {
+	                $this->tpl->setVar('GRADE_ID', $v['id']);
+	                $this->tpl->parse('tutor_seen_block', '');
+	                $this->tpl->parse('tutor_not_seen_block', 'tutor_not_seen', true);
+	            }
+	             $this->tpl->parse('absence_block', 'absence', true);
+	        }
 	    }
 	}
 	
@@ -182,7 +214,7 @@ class User_View extends View
 	}
 	
 
-	public function showStudentList($templateFile, $studentList, $data = array())
+	public function showStudentList($templateFile, $studentList, $page = 1)
 	{
 		$this->tpl->setFile('tpl_main','user/'.$templateFile);
 		$this->tpl->setBlock('tpl_main', 'student_list', 'student_list_block');
@@ -193,6 +225,18 @@ class User_View extends View
 				$this->tpl->setVar(strtoupper($key), $value);
 			}
 			$this->tpl->parse('student_list_block', 'student_list',true );
+		}
+	}
+	
+	public function showClassList($filename, $list = array(), $page = 1, $data = array()) {
+		$this->tpl->setFile ( 'tpl_main', 'user/' . $filename );
+		$this->tpl->setBlock ( 'tpl_main', 'class_List', '_class_List' );
+		$this->tpl->paginator ( $list ['pages'] );
+		foreach ( $list ['data'] as $class ) {
+			foreach ( $class as $key => $value ) {
+				$this->tpl->setVar ( strtoupper ( $key ), $value );
+			}
+			$this->tpl->parse ( '_class_List', 'class_List', true );
 		}
 	}
 

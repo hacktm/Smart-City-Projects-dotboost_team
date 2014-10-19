@@ -119,7 +119,7 @@ class View extends Dot_Template
             $this->setVar("TYPE", $session->user->type);
             if ($session->user && $session->user->type=="student")
             {   
-                 $this->setVar("ACTION", "grades");
+                 $this->setVar("ACTION", "account");
                  $this->parse('student_block', 'student', true);
             }
             else 

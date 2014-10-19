@@ -34,7 +34,7 @@ switch ($registry->requestAction)
 		}
 		else
 		{
-			header('Location: '.$registry->configuration->website->params->url.'/user/grades');
+			header('Location: '.$registry->configuration->website->params->url.'/user/account');
 			exit;
 		}
 	break;
@@ -122,7 +122,7 @@ switch ($registry->requestAction)
 				$session->message['type'] = 'error';
 			}
 		}
-		$data = $userModel->getUserInfo($registry->session->user->id, $registry->session->user->type);
+		$data = $userModel->getUserInfo($registry->session->user->id,$registry->session->user->type);
 		$userView->details('update',$data);
 	break;
 	case 'list-grades':
@@ -234,11 +234,19 @@ switch ($registry->requestAction)
 	       }
 	       if($session->user->type == 'tutor')
 	       {
+	           if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['gradeseen']))
+	            
+	           {
+	               $userModel->confirmeGrade($_POST['gradeseen']);
+	               unset($_POST);
+	           }
 	           $type = 'tutor';
 	           //get student grades
 	           $page = (isset($registry->request['page']) && $registry->request['page'] > 0) ? $registry->request['page'] : 1;
-	           $data=array();
-	           
+	           $session->user->student = $userModel->getTutorStudent($session->user->id);
+	           $session->user->student2->id=$session->user->student['id'];
+	           $session->user->student2->type='student';
+	           $data=$studentModel->getGradesForIdentity($session->user->student2,$page);
 	       }
 	       if($session->user->type == 'teacher')
 	       {
@@ -269,10 +277,20 @@ switch ($registry->requestAction)
 	        }
 	        if($session->user->type == 'tutor')
 	        {
+	            if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['gradeseen']))
+	      
+	            {
+	               $userModel->confirmeAbsence($_POST['gradeseen']);
+	               unset($_POST);
+	            }
 	            $type = 'tutor';
 	            //get student grades
 	            $data=array();
 	            $page = (isset($registry->request['page']) && $registry->request['page'] > 0) ? $registry->request['page'] : 1;
+	            $session->user->student = $userModel->getTutorStudent($session->user->id);
+	            $session->user->student2->id=$session->user->student['id'];
+	            $session->user->student2->type='student';
+	            $data=$studentModel->getAbsencesForIdentity($session->user->student2,$page);
 	        }
 	        if($session->user->type == 'teacher')
 	        {
@@ -320,22 +338,11 @@ switch ($registry->requestAction)
 	        }
 	        else
 	        {
-	            if(!$session->user->type == 'teacher')
-	            {
-	                $userView->loginForm('login');
-	            }
-	            else
-	            {
-	                if($_SERVER['REQUEST_METHOD'] === 'POST')
-	                {
-	                    //baga tare in db nota noua
-	                }
-	                else
-	                {
-	                    //formular
-	                    $userView->add('add','absence');
-	                }
-	            }
+	           $id=$registry->request['id'];
+	           $identity = (array)$dotAuth->getIdentity();
+	           $userModel->addAbsence($id,$identity['id'],1);
+	           header('Location: '.$registry->configuration->website->params->url.'/user/student-menu/id/'.$id);
+	           exit;
 	        }
         break;
         case 'send-message' :
@@ -406,6 +413,8 @@ switch ($registry->requestAction)
 				exit(json_encode($output));
 			break;
 			case 'my-class':
+				$dotAuth = Dot_Auth::getInstance();
+				$identity = (array)$dotAuth->getIdentity();
 				if(!isset($session->user))
 				{
 					// display Login form
@@ -420,14 +429,47 @@ switch ($registry->requestAction)
 					else
 					{
 							$page = (isset($registry->request['page']) && $registry->request['page'] > 0) ? $registry->request['page'] : 1;
-							$studentList=$teacherModel->getStudentsByTeacherIdentity($identity->id,$page);
-							$userView->showStudentList($studentList);
+							$studentList=$teacherModel->getStudentsByTeacherIdentity($identity,$page);
+							$userView->showStudentList('class.tpl',$studentList);
 						
 					}
 				}
 				break;
+			case 'view-classes':
+				$dotAuth = Dot_Auth::getInstance();
+				$identity = (array)$dotAuth->getIdentity();
+				if(!isset($session->user))
+				{
+					// display Login form
+					$userView->loginForm('login');
+				}
+				else
+				{
+					if(!$session->user->type == 'teacher')
+					{
+						$userView->loginForm('login');
+					}
+					else
+					{
+						if (!isset($registry->request['id'])){
+							$page = (isset($registry->request['page']) && $registry->request['page'] > 0) ? $registry->request['page'] : 1;
+							$studentList=$teacherModel->getClassList($page);
+							$userView->showClassList('classlist.tpl',$studentList);
+						}
+						else
+						{
+							$page = (isset($registry->request['page']) && $registry->request['page'] > 0) ? $registry->request['page'] : 1;
+							$studentList=$teacherModel->getStudentListByClassId($registry->request['id'],$page);
+							$userView->showStudentList('class.tpl',$studentList);
+						}
 				
+					}
+				}
+				break;
+				break;
 				case 'view-class':
+					$dotAuth = Dot_Auth::getInstance();
+					$identity = (array)$dotAuth->getIdentity();
 					if(!isset($session->user))
 					{
 						// display Login form
@@ -441,11 +483,24 @@ switch ($registry->requestAction)
 						}
 						else
 						{
+							if (!isset($registry->request['id'])){
+							$page = (isset($registry->request['page']) && $registry->request['page'] > 0) ? $registry->request['page'] : 1;
+							$studentList=$teacherModel->getClassList($page);
+							$userView->showClassList('classlist.tpl',$studentList);
+						}
+							else 
+							{
 							$page = (isset($registry->request['page']) && $registry->request['page'] > 0) ? $registry->request['page'] : 1;
 							$studentList=$teacherModel->getStudentListByClassId($registry->request['id'],$page);
-							$userView->showStudentList($studentList);
+							$userView->showStudentList('class.tpl',$studentList);
+							}
 				
 						}
 					}
 					break;
+		case 'student-menu':
+			$studentId=$registry->request['id'];
+			$studentData=$userModel->getUserInfo($studentId,'student');
+			$userView->details('student_menu',$studentData);
+			break;
 }	

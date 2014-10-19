@@ -139,4 +139,35 @@ class User extends Dot_Model_User
 			$session->message['type'] = 'error';
 		}
 	}
+	
+	public function getTutorStudent($id)
+	{
+	    $select = $this->db->select()
+	                       ->from('studentParent')
+	                       ->join('student','student.id=studentparent.parentId')
+	                       ->where('parentId = ?', $id);
+	    return $this->db->fetchRow($select);
+	}
+	
+	public function confirmeAbsence($confirm)
+	{
+	    foreach($confirm as $k=>$v)
+	    {
+	        $data=array('seen'=>1);
+	        $this->db->update('absence',$data,'id = '.$v);
+	    }
+	}
+	
+	public function confirmeGrade($confirm)
+	{
+	    foreach($confirm as $k=>$v)
+	    {
+	        $data=array('seen'=>1);
+	        $this->db->update('grade',$data,'id = '.$v);
+	    }
+	}
+	public function addAbsence($studentId,$teacherId,$subjectId)
+	{
+		$this->db->insert('absence', array('studentId'=>$studentId,'teacherId'=>$teacherId,'subjectId'=>$subjectId));
+	}
 }

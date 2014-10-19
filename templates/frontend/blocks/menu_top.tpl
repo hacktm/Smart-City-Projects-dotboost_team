@@ -46,7 +46,7 @@
 							<a class="{SEL_USER_GRADES}" href="{SITE_URL}/user/my-class">My class</a>
 						</li>	
 						<li>
-							<a href="{SITE_URL}/user/view-class">View class</a>
+							<a href="{SITE_URL}/user/view-classes">View Classes</a>
 						</li>
 					</ul>
 					
